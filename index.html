@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Avanflix Notice</title>
   <style>
+    /* Make page full screen and remove scrollbars */
     html, body {
       margin: 0;
       padding: 0;
@@ -14,6 +15,7 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
+    /* Canvas covers the whole screen */
     #c {
       position: fixed;
       top: 0;
@@ -25,6 +27,7 @@
       display: block;
     }
 
+    /* Message container overlay */
     .message {
       position: fixed;
       top: 50%;
@@ -48,100 +51,61 @@
   </style>
 </head>
 <body>
+  <!-- Canvas for Matrix background -->
   <canvas id="c"></canvas>
 
+  <!-- Foreground message -->
   <div class="message">
     <h1>Avanflix Has Taken Over Your Site</h1>
     <p>For more information please contact Avanflix: <strong>9100050085</strong></p>
   </div>
 
   <script>
+    // Matrix Rain Script by Boujjou Achraf
     var c = document.getElementById("c");
     var ctx = c.getContext("2d");
 
+    // Making the canvas full screen
     c.height = window.innerHeight;
     c.width = window.innerWidth;
 
-    var matrix = "paislatheeyibeyBAADACOW".split("");
+    // Matrix characters
+    var matrix = "paislatheeyibeyBAADACOW";
+    matrix = matrix.split("");
+
     var font_size = 10;
     var columns = c.width / font_size;
     var drops = [];
-    var charIndices = [];
-
-    for (var x = 0; x < columns; x++) {
+    for (var x = 0; x < columns; x++)
       drops[x] = 1;
-      charIndices[x] = x % matrix.length;
-    }
 
-    // Draw subtle hacker-like mask in the background
-    function drawHackerShape() {
-      var cx = c.width / 2;
-      var cy = c.height / 2 - 100;
-      ctx.save();
-      ctx.globalAlpha = 0.1; // subtle transparency
-      ctx.strokeStyle = "#00FF00";
-      ctx.shadowBlur = 20;
-      ctx.shadowColor = "#00FF00";
-      ctx.lineWidth = 2;
-
-      // Simple "hacker mask" outline
-      ctx.beginPath();
-      ctx.moveTo(cx - 40, cy - 40);
-      ctx.quadraticCurveTo(cx, cy - 70, cx + 40, cy - 40); // forehead
-      ctx.lineTo(cx + 50, cy + 20);
-      ctx.quadraticCurveTo(cx, cy + 70, cx - 50, cy + 20);
-      ctx.closePath();
-      ctx.stroke();
-
-      // Eyes
-      ctx.beginPath();
-      ctx.arc(cx - 20, cy - 10, 6, 0, Math.PI * 2);
-      ctx.arc(cx + 20, cy - 10, 6, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Mouth line
-      ctx.beginPath();
-      ctx.moveTo(cx - 20, cy + 20);
-      ctx.quadraticCurveTo(cx, cy + 30, cx + 20, cy + 20);
-      ctx.stroke();
-
-      ctx.restore();
-    }
-
-    function drawMatrix() {
+    function draw() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
       ctx.fillRect(0, 0, c.width, c.height);
-
-      // Draw hacker shape faintly behind the text
-      drawHackerShape();
 
       ctx.fillStyle = "#00FF00";
       ctx.font = font_size + "px arial";
 
       for (var i = 0; i < drops.length; i++) {
-        var text = matrix[charIndices[i]];
+        var text = matrix[Math.floor(Math.random() * matrix.length)];
         ctx.fillText(text, i * font_size, drops[i] * font_size);
-
-        charIndices[i] = (charIndices[i] + 1) % matrix.length;
 
         if (drops[i] * font_size > c.height && Math.random() > 0.975)
           drops[i] = 0;
+
         drops[i]++;
       }
     }
 
-    setInterval(drawMatrix, 35);
+    setInterval(draw, 35);
 
+    // Adjust canvas size when window is resized
     window.addEventListener("resize", function() {
       c.height = window.innerHeight;
       c.width = window.innerWidth;
       columns = c.width / font_size;
       drops = [];
-      charIndices = [];
-      for (var x = 0; x < columns; x++) {
-        drops[x] = 1;
-        charIndices[x] = x % matrix.length;
-      }
+      for (var x = 0; x < columns; x++) drops[x] = 1;
     });
   </script>
 </body>
