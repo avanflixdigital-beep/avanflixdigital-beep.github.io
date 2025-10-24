@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Avanflix Notice</title>
   <style>
-    /* Make page full screen and remove scrollbars */
     html, body {
       margin: 0;
       padding: 0;
@@ -15,7 +14,6 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
-    /* Canvas covers the whole screen */
     #c {
       position: fixed;
       top: 0;
@@ -27,7 +25,6 @@
       display: block;
     }
 
-    /* Message container overlay */
     .message {
       position: fixed;
       top: 50%;
@@ -51,33 +48,35 @@
   </style>
 </head>
 <body>
-  <!-- Canvas for Matrix background -->
   <canvas id="c"></canvas>
 
-  <!-- Foreground message -->
   <div class="message">
     <h1>Avanflix Has Taken Over Your Site</h1>
     <p>For more information please contact Avanflix: <strong>9100050085</strong></p>
   </div>
 
   <script>
-    // Matrix Rain Script by Boujjou Achraf
     var c = document.getElementById("c");
     var ctx = c.getContext("2d");
 
-    // Making the canvas full screen
     c.height = window.innerHeight;
     c.width = window.innerWidth;
 
-    // Matrix characters
+    // Matrix characters (fixed sequence)
     var matrix = "paislatheeyibeyBAADACOW";
     matrix = matrix.split("");
 
     var font_size = 10;
     var columns = c.width / font_size;
+
+    // One character index per column
     var drops = [];
-    for (var x = 0; x < columns; x++)
+    var charIndices = [];
+
+    for (var x = 0; x < columns; x++) {
       drops[x] = 1;
+      charIndices[x] = x % matrix.length; // Each column starts at a different character
+    }
 
     function draw() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
@@ -87,25 +86,33 @@
       ctx.font = font_size + "px arial";
 
       for (var i = 0; i < drops.length; i++) {
-        var text = matrix[Math.floor(Math.random() * matrix.length)];
+        // Use the next character in sequence (no randomization)
+        var text = matrix[charIndices[i]];
         ctx.fillText(text, i * font_size, drops[i] * font_size);
 
-        if (drops[i] * font_size > c.height && Math.random() > 0.975)
-          drops[i] = 0;
+        // Move to next character in sequence
+        charIndices[i] = (charIndices[i] + 1) % matrix.length;
 
+        // Reset drop position when it goes off screen
+        if (drops[i] * font_size > c.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
         drops[i]++;
       }
     }
 
     setInterval(draw, 35);
 
-    // Adjust canvas size when window is resized
     window.addEventListener("resize", function() {
       c.height = window.innerHeight;
       c.width = window.innerWidth;
       columns = c.width / font_size;
       drops = [];
-      for (var x = 0; x < columns; x++) drops[x] = 1;
+      charIndices = [];
+      for (var x = 0; x < columns; x++) {
+        drops[x] = 1;
+        charIndices[x] = x % matrix.length;
+      }
     });
   </script>
 </body>
